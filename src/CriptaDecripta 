@@ -1,0 +1,109 @@
+public class CriptaDecripta {
+
+    private static final int CHIAVE_CESARE = 3;
+    private static final String CHIAVE_XOR = "ChiaveSegreta";
+
+    void criptaContenuto(String fileInput, String fileOutput) {
+        try {
+            FileReader fileReader = new FileReader(fileInput);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuilder contenuto = new StringBuilder();
+
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                contenuto.append(linea).append("\n");
+            }
+
+            bufferedReader.close();
+            fileReader.close();
+
+            Crypto crypto = new Crypto();
+            String contenutoCesare = crypto.Cesar(contenuto.toString(), CHIAVE_CESARE);
+            String contenutoCifrato = crypto.xorAlgo(contenutoCesare, CHIAVE_XOR);
+
+            FileWriter fileWriter = new FileWriter(fileOutput);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(contenutoCifrato);
+
+            bufferedWriter.close();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void decriptaContenuto(String fileInput, String fileOutput) {
+        try {
+            FileReader fileReader = new FileReader(fileInput);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuilder contenutoCifrato = new StringBuilder();
+
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                contenutoCifrato.append(linea).append("\n");
+            }
+
+            bufferedReader.close();
+            fileReader.close();
+
+            Crypto crypto = new Crypto();
+            String contenutoCesare = crypto.xorAlgo(contenutoCifrato.toString(), CHIAVE_XOR);
+            String contenutoDecifrato = crypto.Cesar(contenutoCesare, CHIAVE_CESARE);
+
+            FileWriter fileWriter = new FileWriter(fileOutput);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(contenutoDecifrato);
+
+            bufferedWriter.close();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void stampaContenuto(String fileInput) {
+        try {
+            FileReader fileReader = new FileReader(fileInput);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                System.out.println(linea);
+            }
+
+            bufferedReader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Crypto {
+
+    String Cesar(String data, int shift) {
+        StringBuilder risultato = new StringBuilder(data.length());
+        for (char singoloCarattere : data.toCharArray()) {
+            int carattereSpostato = (int) (singoloCarattere + shift) % 256;
+            risultato.append((char) carattereSpostato);
+        }
+        return risultato.toString();
+    }
+
+    String xorAlgo(String data, String key) {
+        StringBuilder acc = new StringBuilder();
+
+        for (int i = 0; i < data.length(); i++) {
+            char d = data.charAt(i);
+
+            for (int j = 0; j < key.length(); j++) {
+                char k = key.charAt(j);
+
+                char xorChar = (char) (d ^ k);
+                acc = acc + xorChar;
+            }
+        }
+
+        return acc;
+    }
+}
